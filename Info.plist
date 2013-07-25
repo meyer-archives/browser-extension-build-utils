@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Author</key>
+	<string><%= EXT_AUTHOR %></string>
+	<key>Builder Version</key>
+	<string>9537.48.3</string>
+	<key>CFBundleDisplayName</key>
+	<string><%= EXT_DISPLAY_NAME %></string>
+	<key>CFBundleIdentifier</key>
+	<string><%= EXT_BUNDLE_ID %></string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleShortVersionString</key>
+	<string><%= @ext_version %></string>
+	<key>CFBundleVersion</key>
+	<string><%= @ext_version %></string>
+	<key>Chrome</key>
+	<dict/>
+	<key>Content</key>
+	<dict>
+		<key>Scripts</key>
+		<dict>
+			<key>Start</key>
+			<array><% @ext_files.each do |filename| %>
+				<string><%= filename %></string><% end %>
+			</array>
+		</dict>
+		<key>Whitelist</key>
+		<array><% WHITELIST.each_with_index do |pattern| %>
+			<string><%= pattern %></string><% end %>
+		</array>
+	</dict>
+	<key>Description</key>
+	<string><%= EXT_DESC %></string>
+	<key>ExtensionInfoDictionaryVersion</key>
+	<string>1.0</string>
+	<key>Permissions</key>
+	<dict>
+		<key>Website Access</key>
+		<dict>
+			<key>Include Secure Pages</key>
+			<true/>
+			<key>Level</key>
+			<string>All</string>
+		</dict>
+	</dict>
+	<key>Website</key>
+	<string><%= EXT_URL %></string>
+</dict>
+</plist>

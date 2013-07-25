@@ -1,0 +1,23 @@
+{
+	"name": "<%= EXT_DISPLAY_NAME %>",
+	"manifest_version": 2,
+	"version": "<%= @ext_version %>",
+	"description": "<%= EXT_DESC %>",
+	"homepage_url": "<%= EXT_URL %>",
+	"icons": {<% EXT_ICONS.each_with_index do |icon_size, i| %>
+		"<%= icon_size %>": "Icon-<%= icon_size %>.png"<% if i != EXT_ICONS.size-1 %>,<% end %><% end %>
+	},
+	"content_scripts": [{
+		"all_frames": true,
+		"run_at": "document_start",
+		"js":[<% @ext_files.each_with_index do |filename, i| %>
+			"<%= filename %>"<% if i != @ext_files.size-1 %>,<% end %><% end %>
+		],
+		"matches": [<% WHITELIST.each_with_index do |pattern, i| %>
+			"<%= pattern %>"<% if i != WHITELIST.size-1 %>,<% end %><% end %>
+		]
+	}],
+	"permissions": [
+		"tabs"
+	]
+}
