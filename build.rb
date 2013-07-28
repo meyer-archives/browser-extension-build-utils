@@ -150,7 +150,7 @@ namespace :extension do
 		end
 	end
 
-	task :compile_extension => [:copy_files, :reset_build] do
+	task :compile_extension => [:reset_build, :copy_files] do
 		# Using absolute paths because of the directory change
 		# TODO: better fix
 		build_options = [
