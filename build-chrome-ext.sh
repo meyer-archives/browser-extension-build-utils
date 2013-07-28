@@ -4,7 +4,7 @@
 # Source:  http://developer.chrome.com/extensions/crx.html
 
 if test $# -ne 4; then
-	echo "Usage: build-chrome-ext.sh BUILD_PREFIX CERT_DIR TEMP_DIR BUILD_SRC"
+	echo "Usage: build-chrome-ext.sh EXT_PREFIX CERT_DIR TEMP_DIR BUILD_SRC"
 	exit 1
 fi
 

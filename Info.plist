@@ -28,7 +28,7 @@
 			</array>
 		</dict>
 		<key>Whitelist</key>
-		<array><% WHITELIST.each_with_index do |pattern| %>
+		<array><% EXT_WHITELIST.each_with_index do |pattern| %>
 			<string><%= pattern %></string><% end %>
 		</array>
 	</dict>

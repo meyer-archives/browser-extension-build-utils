@@ -2,6 +2,8 @@
 class String
 	def console_red; colorize(self, "\e[1m\e[31m"); end
 	def console_green; colorize(self, "\e[1m\e[32m"); end
+	def console_green_underline; colorize(self, "\e[4m\e[1m\e[32m"); end
+
 	def console_bold; colorize(self, "\e[1m"); end
 	def console_underline; colorize(self, "\e[4m"); end
 

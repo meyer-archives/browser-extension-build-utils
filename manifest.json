@@ -13,8 +13,8 @@
 		"js":[<% @ext_files.each_with_index do |filename, i| %>
 			"<%= filename %>"<% if i != @ext_files.size-1 %>,<% end %><% end %>
 		],
-		"matches": [<% WHITELIST.each_with_index do |pattern, i| %>
-			"<%= pattern %>"<% if i != WHITELIST.size-1 %>,<% end %><% end %>
+		"matches": [<% EXT_WHITELIST.each_with_index do |pattern, i| %>
+			"<%= pattern %>"<% if i != EXT_WHITELIST.size-1 %>,<% end %><% end %>
 		]
 	}],
 	"permissions": [
