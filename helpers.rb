@@ -1,8 +1,7 @@
 # Yoinked from Github
 class String
-	def console_red; colorize(self, "\e[1m\e[31m"); end
-	def console_green; colorize(self, "\e[1m\e[32m"); end
-	def console_green_underline; colorize(self, "\e[4m\e[1m\e[32m"); end
+	def console_red; colorize(self, "\e[31m"); end
+	def console_green; colorize(self, "\e[32m"); end
 
 	def console_bold; colorize(self, "\e[1m"); end
 	def console_underline; colorize(self, "\e[4m"); end
@@ -14,6 +13,8 @@ end
 def erb_crunch(filename, source_dir, destination_dir)
 	source_file = File.join(source_dir, filename)
 	destination_file = File.join(destination_dir, filename)
+
+	mkdir_p destination_dir
 
 	File.open(destination_file, "w") do |f|
 		f.puts ERB.new(IO.read(source_file)).result(binding)
