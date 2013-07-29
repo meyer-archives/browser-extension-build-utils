@@ -19,7 +19,7 @@ sig="$TEMP_DIR/chrome.sig"
 
 mkdir -p "$TEMP_DIR"
 
-# Change to temp/extension_name.safariextension
+# Change to build/extension_name.safariextension
 ( cd "$TEMP_DIR/$BUILD_SRC" &&
 	zip -qr --exclude=*.Info.plist* --exclude=*.coffee -9 -X "$zip" . )
 
