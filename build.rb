@@ -4,6 +4,8 @@ PWD = File.expand_path(File.dirname(__FILE__))
 EXT_DEST_DIR = "#{EXT_NAME}.safariextension"
 EXT_DEST_PATH = File.join(TEMP_DIR, EXT_DEST_DIR)
 
+@ext_version = EXT_VERSION
+
 @ext_files = []
 @js_files = []
 @cs_files = []
@@ -73,11 +75,10 @@ namespace :extension do
 	end
 
 	task :dev_header do
+		# Add build number for dev versions
 		@ext_version = [
-			'0',
-			# Chrome requires: max of four digits per section, no initial zero.
-			Time.now.to_i.to_s[-9,4].sub(%r{^0},''),
-			Time.now.to_i.to_s[-5,4].sub(%r{^0},'')
+			EXT_VERSION,
+			(Time.now.to_i/60).to_s[-4,4].sub(%r{^0},'')
 		].join('.')
 
 		title = "Build #{EXT_DISPLAY_NAME} #{@ext_version}"
