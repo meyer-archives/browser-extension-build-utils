@@ -19,7 +19,7 @@ sig="$TEMP_DIR/safari.sig"
 
 mkdir -p "$TEMP_DIR"
 
-# Change to temp/
+# Change to build/
 ( cd "$TEMP_DIR" &&
 	xar -czf "$zip" --distribution "./$BUILD_SRC" )
 

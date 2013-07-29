@@ -117,7 +117,7 @@ namespace :extension do
 		# Make ./bin
 		mkdir_p EXT_RELEASE_DIR
 
-		# Reset ./temp/demo.safariextension
+		# Reset ./build/demo.safariextension
 		rm_rf EXT_DEST_PATH
 		mkdir_p EXT_DEST_PATH
 
@@ -155,7 +155,7 @@ namespace :extension do
 		# Using absolute paths because of the directory change
 		# TODO: better fix
 		build_options = [
-			File.join(EXT_RELEASE_DIR, EXT_BUILD_PREFIX),
+			File.join(EXT_RELEASE_DIR, "#{EXT_NAME}-#{@ext_version}"),
 			EXT_CERT_DIR,
 			File.expand_path(TEMP_DIR),
 			EXT_DEST_DIR
