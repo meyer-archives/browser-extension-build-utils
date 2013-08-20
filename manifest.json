@@ -7,6 +7,17 @@
 	"icons": {<% EXT_ICONS.each_with_index do |icon_size, i| %>
 		"<%= icon_size %>": "Icon-<%= icon_size %>.png"<% if i != EXT_ICONS.size-1 %>,<% end %><% end %>
 	},
+	"browser_action": {
+		"default_icon": {
+			"19": "toolbar-button-icon-chrome.png",
+			"38": "toolbar-button-icon-chrome@2x.png"
+		},
+		"default_title": "<%= EXT_DISPLAY_NAME %>",
+		"default_popup": "popover.html"
+	},
+	"background": {
+		"page": "background.html"
+	},
 	"content_scripts": [{
 		"all_frames": true,
 		"run_at": "document_start",

@@ -1,3 +1,5 @@
+require 'erb'
+
 # Yoinked from Github
 class String
 	def console_red; colorize(self, "\e[31m"); end

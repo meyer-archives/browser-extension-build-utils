@@ -17,7 +17,38 @@
 	<key>CFBundleVersion</key>
 	<string><%= @ext_version %></string>
 	<key>Chrome</key>
-	<dict/>
+	<dict>
+		<key>Global Page</key>
+		<string>background.html</string>
+		<key>Popovers</key>
+		<array>
+			<dict>
+				<key>Filename</key>
+				<string>popover.html</string>
+				<key>Height</key>
+				<real>400</real>
+				<key>Identifier</key>
+				<string>DexPopover</string>
+				<key>Width</key>
+				<real>300</real>
+			</dict>
+		</array>
+		<key>Toolbar Items</key>
+		<array>
+			<dict>
+				<key>Identifier</key>
+				<string>DexToolbarItem</string>
+				<key>Image</key>
+				<string>toolbar-button-icon-safari.png</string>
+				<key>Label</key>
+				<string>Dex Toolbar Item</string>
+				<key>Popover</key>
+				<string>DexPopover</string>
+				<key>Tool Tip</key>
+				<string>Show Dex menu</string>
+			</dict>
+		</array>
+	</dict>
 	<key>Content</key>
 	<dict>
 		<key>Scripts</key>
@@ -48,5 +79,7 @@
 	</dict>
 	<key>Website</key>
 	<string><%= EXT_URL %></string>
+	<key>Update Manifest URL</key>
+	<string><%= EXT_SAFARI_UPDATE_URL %></string>
 </dict>
 </plist>

@@ -26,8 +26,8 @@ mkdir -p "$TEMP_DIR"
 xar --sign -f "$zip" \
 	--digestinfo-to-sign "$digest" \
 	--sig-size 256 \
-	--exclude *manifest.json* \
-	--exclude *.coffee \
+	--exclude=*manifest.json* \
+	--exclude=*.coffee \
 	--cert-loc "$CERT_DIR/cert.der" \
 	--cert-loc "$CERT_DIR/cert01" \
 	--cert-loc "$CERT_DIR/cert02"

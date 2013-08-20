@@ -1,5 +1,3 @@
-require 'erb'
-
 PWD = File.expand_path(File.dirname(__FILE__))
 EXT_DEST_DIR = "#{EXT_NAME}.safariextension"
 EXT_DEST_PATH = File.join(TEMP_DIR, EXT_DEST_DIR)
@@ -37,6 +35,17 @@ namespace :extension do
 
 		pf_errors = []
 		pf_success = []
+
+		if EXT_BACKGROUND_PAGE
+			@cs_files.push 'background.coffee'
+
+			# TODO: check for background page/scripts
+			pf_success.push 'TODO: check for background page/scripts'
+		end
+
+		if EXT_POPOVER_MENU
+			@cs_files.push 'popover.coffee'
+		end
 
 		# Conditionally check for CoffeeScript
 		if @cs_files.length and not `which coffee`.strip!
@@ -143,11 +152,23 @@ namespace :extension do
 		erb_crunch('Info.plist', PWD, EXT_DEST_PATH)
 		erb_crunch('manifest.json', PWD, EXT_DEST_PATH)
 
+		if EXT_BACKGROUND_PAGE
+			erb_crunch('background.html', EXT_SOURCE_DIR, EXT_DEST_PATH)
+		end
+
+		if EXT_POPOVER_MENU
+			@ext_icons.push 'toolbar-button-icon-safari.png'
+			@ext_icons.push 'toolbar-button-icon-safari@2x.png'
+			@ext_icons.push 'toolbar-button-icon-chrome.png'
+			@ext_icons.push 'toolbar-button-icon-chrome@2x.png'
+			erb_crunch('popover.css', EXT_SOURCE_DIR, EXT_DEST_PATH)
+			erb_crunch('popover.html', EXT_SOURCE_DIR, EXT_DEST_PATH)
+		end
+
 		# Icons
 		@ext_icons.each do |filename|
-			if cp File.join(EXT_SOURCE_DIR,filename), EXT_DEST_PATH
-				puts "✔ Copied "+filename.console_bold
-			end
+			cp File.join(EXT_SOURCE_DIR,filename), EXT_DEST_PATH
+			puts "✔ Copied "+filename.console_bold
 		end
 	end
 
@@ -167,6 +188,7 @@ namespace :extension do
 		if `#{PWD}/build-chrome-ext.sh #{build_options}`
 			puts "✔ Built Chrome extension to #{EXT_RELEASE_DIR}".console_bold
 		end
+		erb_crunch('safari-update-manifest.plist', SERVER_SOURCE_DIR, EXT_RELEASE_DIR)
 	end
 
 	task :finish do
