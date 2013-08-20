@@ -87,7 +87,7 @@ namespace :extension do
 		# Add build number for dev versions
 		@ext_version = [
 			EXT_VERSION,
-			(Time.now.to_i/60).to_s[-4,4].sub(%r{^0},'')
+			(Time.now.to_i/60).to_s[-4,4].sub(%r{^0},'9')
 		].join('.')
 
 		title = "Build #{EXT_DISPLAY_NAME} #{@ext_version}"

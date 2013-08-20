@@ -16,7 +16,8 @@
 		"default_popup": "popover.html"
 	},
 	"background": {
-		"page": "background.html"
+		"scripts": ["background.js"],
+		"persistent": false
 	},
 	"content_scripts": [{
 		"all_frames": true,
