@@ -54,7 +54,7 @@
 		<key>Scripts</key>
 		<dict>
 			<key>Start</key>
-			<array><% @ext_files.each do |filename| %>
+			<array><% @content_scripts.each do |filename| %>
 				<string><%= filename %></string><% end %>
 			</array>
 		</dict>
@@ -80,6 +80,6 @@
 	<key>Website</key>
 	<string><%= EXT_URL %></string>
 	<key>Update Manifest URL</key>
-	<string><%= EXT_SAFARI_UPDATE_URL %></string>
+	<string><%= EXT_SAFARI_UPDATE_MANIFEST_URL %></string>
 </dict>
 </plist>

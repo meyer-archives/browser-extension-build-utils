@@ -22,13 +22,16 @@
 	"content_scripts": [{
 		"all_frames": true,
 		"run_at": "document_start",
-		"js":[<% @ext_files.each_with_index do |filename, i| %>
-			"<%= filename %>"<% if i != @ext_files.size-1 %>,<% end %><% end %>
+		"js":[<% @content_scripts.each_with_index do |filename, i| %>
+			"<%= filename %>"<% if i != @content_scripts.size-1 %>,<% end %><% end %>
 		],
 		"matches": [<% EXT_WHITELIST.each_with_index do |pattern, i| %>
 			"<%= pattern %>"<% if i != EXT_WHITELIST.size-1 %>,<% end %><% end %>
 		]
 	}],
+	"web_accessible_resources": [<% EXT_EXTRA_RESOURCES.each_with_index do |resource, i| %>
+		"<%= resource.sub('.coffee','.js') %>"<% if i != EXT_EXTRA_RESOURCES.size-1 %>,<% end %><% end %>
+	],
 	"permissions": [
 		"tabs"
 	]

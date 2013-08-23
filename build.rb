@@ -4,47 +4,69 @@ EXT_DEST_PATH = File.join(TEMP_DIR, EXT_DEST_DIR)
 
 @ext_version = EXT_VERSION
 
-@ext_files = []
-@js_files = []
+@content_scripts = []
 @cs_files = []
+@text_files = []
+@binary_files = []
 
-EXT_FILES.each do |filename|
+EXT_CONTENT_SCRIPTS.each do |filename|
 	if filename.include? '.coffee'
 		@cs_files.push filename
 	else
-		@js_files.push filename
+		@text_files.push filename
 	end
-	@ext_files.push filename.sub('.coffee','.js')
+	@content_scripts.push filename.sub('.coffee','.js')
 end
 
-@ext_icons = []
-
-EXT_ICONS.each do |icon_size|
-	@ext_icons.push "Icon-#{icon_size}.png"
+EXT_EXTRA_RESOURCES.each do |filename|
+	if filename.include? '.coffee'
+		@cs_files.push filename
+	elsif filename.include? '.js'
+		@text_files.push filename
+	else
+		@binary_files.push filename
+	end
 end
 
 namespace :extension do
 	desc "Build browser extensions for #{EXT_DISPLAY_NAME}"
-	task :build_release => [:preflight, :release_header, :compile_extension, :finish]
+	task :build_release => [:preflight, :confirm_build, :compile_extension, :finish]
 
 	desc "Build browser extension folder for #{EXT_DISPLAY_NAME}"
-	task :build_dev => [:preflight, :dev_header, :reset_build, :copy_files, :finish]
+	task :build_dev => [:set_dev_version, :preflight, :reset_build, :copy_files, :finish]
 
-	task :preflight do
-		puts '','Preflight checks'.console_underline.console_bold
+	task :build_arrays do
+		EXT_ICONS.each do |icon_size|
+			@binary_files.push "Icon-#{icon_size}.png"
+		end
+
+		if EXT_BACKGROUND_PAGE
+			@text_files.push 'background.html'
+			@cs_files.push 'background.coffee'
+		end
+
+		if EXT_POPOVER_MENU
+			@binary_files.push 'toolbar-button-icon-safari.png'
+			@binary_files.push 'toolbar-button-icon-safari@2x.png'
+			@binary_files.push 'toolbar-button-icon-chrome.png'
+			@binary_files.push 'toolbar-button-icon-chrome@2x.png'
+			@text_files.push 'popover.css'
+			@text_files.push 'popover.html'
+			@cs_files.push 'popover.coffee'
+		end
+	end
+
+	task :preflight => [:build_arrays] do
+		puts '', "#{EXT_DISPLAY_NAME} #{@ext_version}"
+
+		puts '','Preflight checks'.console_underline
 
 		pf_errors = []
 		pf_success = []
 
 		if EXT_BACKGROUND_PAGE
-			@cs_files.push 'background.coffee'
-
 			# TODO: check for background page/scripts
 			pf_success.push 'TODO: check for background page/scripts'
-		end
-
-		if EXT_POPOVER_MENU
-			@cs_files.push 'popover.coffee'
 		end
 
 		# Conditionally check for CoffeeScript
@@ -62,42 +84,32 @@ namespace :extension do
 
 		# TODO: Check for certificates in EXT_CERT_DIR
 
-		if @ext_icons.length > 0
-			@ext_icons.each do |filename|
-				if File.exists? File.join(EXT_SOURCE_DIR, filename)
-					pf_success.push filename+' exists'
-				else
-					pf_errors.push filename+' does not exist in '+EXT_SOURCE_DIR
-				end
+		((@cs_files + @text_files).sort + @binary_files).each do |filename|
+			if File.exists? File.join(EXT_SOURCE_DIR, filename)
+				pf_success.push filename+' exists'
+			else
+				pf_errors.push filename+' does not exist in '+EXT_SOURCE_DIR
 			end
-		end
-
-		if pf_success.length > 0
-			puts ('✔ '+pf_success.join("\n✔ ")).console_green
 		end
 
 		if pf_errors.length > 0
 			puts ('✗ '+pf_errors.join("\n✗ ")).console_red
 			puts '','Corrent the errors to continue.',''
 			exit 1
+		else
+			puts '✔ Everything looks good from here'
 		end
 	end
 
-	task :dev_header do
-		# Add build number for dev versions
+	task :set_dev_version do
 		@ext_version = [
 			EXT_VERSION,
 			(Time.now.to_i/60).to_s[-4,4].sub(%r{^0},'9')
 		].join('.')
-
-		title = "Build #{EXT_DISPLAY_NAME} #{@ext_version}"
-		puts '', title.console_underline.console_bold
 	end
 
-	task :release_header do
-		title = "Build #{EXT_DISPLAY_NAME} #{@ext_version}"
-		puts '', title.console_underline.console_bold
-		puts 'Browser extensions will be built in '+EXT_RELEASE_DIR.console_bold+'.',''
+	task :confirm_build do
+		puts "Browser extensions will be built in #{EXT_RELEASE_DIR}",''
 		print 'Is that ok? (y/n): '
 
 		once = false
@@ -135,40 +147,27 @@ namespace :extension do
 	end
 
 	task :copy_files do
-		# CoffeeScript files
-		@cs_files.each do |filename|
-			cs_file = erb_crunch(filename, EXT_SOURCE_DIR, EXT_DEST_PATH)
-			if `coffee -c #{cs_file}`
-				puts "✔ Compiled " + filename.console_bold + " to " + filename.sub('.coffee','.js').console_bold
-			end
-		end
-
-		# Javascript files
-		@js_files.each do |filename|
-			erb_crunch(filename, EXT_SOURCE_DIR, EXT_DEST_PATH)
-		end
-
-		# Extension metadata
+		puts '','Crunch extension metadata'.console_underline
 		erb_crunch('Info.plist', PWD, EXT_DEST_PATH)
 		erb_crunch('manifest.json', PWD, EXT_DEST_PATH)
 
-		if EXT_BACKGROUND_PAGE
-			erb_crunch('background.html', EXT_SOURCE_DIR, EXT_DEST_PATH)
+		puts '','Crunch CoffeeScript files'.console_underline
+		@cs_files.each do |filename|
+			cs_file = erb_crunch(filename, EXT_SOURCE_DIR, EXT_DEST_PATH)
+			if `coffee -c #{cs_file}`
+				puts "✔ Compiled #{filename} to #{filename.sub('.coffee','.js')}"
+			end
 		end
 
-		if EXT_POPOVER_MENU
-			@ext_icons.push 'toolbar-button-icon-safari.png'
-			@ext_icons.push 'toolbar-button-icon-safari@2x.png'
-			@ext_icons.push 'toolbar-button-icon-chrome.png'
-			@ext_icons.push 'toolbar-button-icon-chrome@2x.png'
-			erb_crunch('popover.css', EXT_SOURCE_DIR, EXT_DEST_PATH)
-			erb_crunch('popover.html', EXT_SOURCE_DIR, EXT_DEST_PATH)
+		puts '','Crunch text files'.console_underline
+		@text_files.each do |filename|
+			erb_crunch(filename, EXT_SOURCE_DIR, EXT_DEST_PATH)
 		end
 
-		# Icons
-		@ext_icons.each do |filename|
-			cp File.join(EXT_SOURCE_DIR,filename), EXT_DEST_PATH
-			puts "✔ Copied "+filename.console_bold
+		puts '','Copy binary resources'.console_underline
+		@binary_files.each do |filename|
+			cp File.join(EXT_SOURCE_DIR, filename), EXT_DEST_PATH
+			puts "✔ Copied #{filename}"
 		end
 	end
 
@@ -183,10 +182,10 @@ namespace :extension do
 		].join(' ')
 
 		if `#{PWD}/build-safari-ext.sh #{build_options}`
-			puts "✔ Built Safari extension to #{EXT_RELEASE_DIR}".console_bold
+			puts "✔ Built Safari extension to #{EXT_RELEASE_DIR}"
 		end
 		if `#{PWD}/build-chrome-ext.sh #{build_options}`
-			puts "✔ Built Chrome extension to #{EXT_RELEASE_DIR}".console_bold
+			puts "✔ Built Chrome extension to #{EXT_RELEASE_DIR}"
 		end
 		erb_crunch('safari-update-manifest.plist', SERVER_SOURCE_DIR, EXT_RELEASE_DIR)
 	end
