@@ -20,7 +20,7 @@ def erb_crunch(filename, source_dir, destination_dir)
 
 	File.open(destination_file, "w") do |f|
 		f.puts ERB.new(IO.read(source_file)).result(binding)
-		puts '✔ Crunched '+filename.console_bold
+		puts "✔ Crunched #{filename.console_bold}"
 	end
 
 	return destination_file

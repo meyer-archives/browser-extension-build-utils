@@ -155,7 +155,7 @@ namespace :extension do
 		@cs_files.each do |filename|
 			cs_file = erb_crunch(filename, EXT_SOURCE_DIR, EXT_DEST_PATH)
 			if `coffee -c #{cs_file}`
-				puts "✔ Compiled #{filename} to #{filename.sub('.coffee','.js')}"
+				puts "✔ Compiled #{filename.console_bold} to #{filename.sub('.coffee','.js').console_bold}"
 			end
 		end
 
@@ -167,7 +167,7 @@ namespace :extension do
 		puts '','Copy binary resources'.console_underline
 		@binary_files.each do |filename|
 			cp File.join(EXT_SOURCE_DIR, filename), EXT_DEST_PATH
-			puts "✔ Copied #{filename}"
+			puts "✔ Copied #{filename.console_bold}"
 		end
 	end
 
