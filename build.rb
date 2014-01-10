@@ -81,11 +81,6 @@ namespace :extension do
 			@text_files.push 'popover.html'
 			@cs_files.push 'popover.coffee'
 		end
-
-		puts "@cs_files: #{@cs_files}"
-		puts "@text_files: #{@text_files}"
-		puts "@binary_files: #{@binary_files}"
-
 	end
 
 	task :preflight => [:build_arrays] do
