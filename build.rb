@@ -5,27 +5,54 @@ EXT_DEST_PATH = File.join(TEMP_DIR, EXT_DEST_DIR)
 @ext_version = EXT_VERSION
 
 @content_scripts = []
+@extra_resources = []
+
+# @js_files = []
 @cs_files = []
 @text_files = []
 @binary_files = []
 
+=begin
+{
+	:content_scripts => EXT_CONTENT_SCRIPTS,
+	:extra_resources => EXT_EXTRA_RESOURCES
+}.each do |var, filenames|
+	filenames.map! do |filename|
+		@cs_files.push filename if filename.match? /\.coffee$/
+		@js_files.push filename if filename.match? /\.js$/
+		filename.sub('.coffee','.js')
+	end
+
+	# Nasty hack, but whatever.
+	instance_variable_set "@#{var}", filenames
+end
+
+@ext_icons = []
+EXT_ICONS.each {|s| @ext_icons.push "Icon-#{s}.png" }
+=end
+
 EXT_CONTENT_SCRIPTS.each do |filename|
-	if filename.include? '.coffee'
+	if /\.coffee$/.match filename
 		@cs_files.push filename
 	else
 		@text_files.push filename
 	end
-	@content_scripts.push filename.sub('.coffee','.js')
+	@content_scripts.push filename.sub(".coffee",".js")
 end
 
 EXT_EXTRA_RESOURCES.each do |filename|
-	if filename.include? '.coffee'
-		@cs_files.push filename
-	elsif filename.include? '.js'
-		@text_files.push filename
+	/\.(coffee|js|html|css)$/ =~ filename
+
+	if Regexp.last_match
+		if Regexp.last_match[1] == "coffee"
+			@cs_files.push filename
+		else
+			@text_files.push filename
+		end
 	else
 		@binary_files.push filename
 	end
+	@extra_resources.push filename.sub ".coffee",".js"
 end
 
 namespace :extension do
@@ -54,6 +81,11 @@ namespace :extension do
 			@text_files.push 'popover.html'
 			@cs_files.push 'popover.coffee'
 		end
+
+		puts "@cs_files: #{@cs_files}"
+		puts "@text_files: #{@text_files}"
+		puts "@binary_files: #{@binary_files}"
+
 	end
 
 	task :preflight => [:build_arrays] do
@@ -92,9 +124,11 @@ namespace :extension do
 			end
 		end
 
+		puts pf_errors.map {|q| "✗ #{q}"}.join("\n").console_red
+		puts pf_success.map {|q| "✔ #{q}"}.join("\n").console_green
+
 		if pf_errors.length > 0
-			puts ('✗ '+pf_errors.join("\n✗ ")).console_red
-			puts '','Corrent the errors to continue.',''
+			puts '','Correct the errors to continue.',''
 			exit 1
 		else
 			puts '✔ Everything looks good from here'

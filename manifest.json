@@ -4,8 +4,8 @@
 	"version": "<%= @ext_version %>",
 	"description": "<%= EXT_DESC %>",
 	"homepage_url": "<%= EXT_URL %>",
-	"icons": {<% EXT_ICONS.each_with_index do |icon_size, i| %>
-		"<%= icon_size %>": "Icon-<%= icon_size %>.png"<% if i != EXT_ICONS.size-1 %>,<% end %><% end %>
+	"icons": {
+<%= EXT_ICONS.map {|s| "\t\t\"#{s}\": \"Icon-#{s}.png\""}.join(",\n") %>
 	},
 	"browser_action": {
 		"default_icon": {
@@ -22,15 +22,15 @@
 	"content_scripts": [{
 		"all_frames": true,
 		"run_at": "document_start",
-		"js":[<% @content_scripts.each_with_index do |filename, i| %>
-			"<%= filename %>"<% if i != @content_scripts.size-1 %>,<% end %><% end %>
+		"js":[
+<%= @content_scripts.map {|cs| "\t\t\t\"#{cs}\"" }.join(",\n") %>
 		],
-		"matches": [<% EXT_WHITELIST.each_with_index do |pattern, i| %>
-			"<%= pattern %>"<% if i != EXT_WHITELIST.size-1 %>,<% end %><% end %>
+		"matches": [
+<%= EXT_WHITELIST.map {|pattern| "\t\t\t\"#{pattern}\""}.join(",\n") %>
 		]
 	}],
-	"web_accessible_resources": [<% EXT_EXTRA_RESOURCES.each_with_index do |resource, i| %>
-		"<%= resource.sub('.coffee','.js') %>"<% if i != EXT_EXTRA_RESOURCES.size-1 %>,<% end %><% end %>
+	"web_accessible_resources": [
+<%= @extra_resources.map {|r| "\t\t\"#{r}\"" }.join(",\n") %>
 	],
 	"permissions": [
 		"tabs"
