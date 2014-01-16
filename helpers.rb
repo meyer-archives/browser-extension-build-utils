@@ -1,4 +1,4 @@
-require 'erb'
+require "erb"
 
 # Yoinked from Github
 class String

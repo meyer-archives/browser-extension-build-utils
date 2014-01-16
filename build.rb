@@ -7,7 +7,6 @@ EXT_DEST_PATH = File.join(TEMP_DIR, EXT_DEST_DIR)
 @content_scripts = []
 @extra_resources = []
 
-# @js_files = []
 @cs_files = []
 @text_files = []
 @binary_files = []
@@ -18,7 +17,7 @@ EXT_CONTENT_SCRIPTS.each do |filename|
 	else
 		@text_files.push filename
 	end
-	@content_scripts.push filename.sub(".coffee",".js")
+	@content_scripts.push filename.sub ".coffee",".js"
 end
 
 EXT_EXTRA_RESOURCES.each do |filename|
@@ -49,39 +48,39 @@ namespace :extension do
 		end
 
 		if EXT_BACKGROUND_PAGE
-			@text_files.push 'background.html'
-			@cs_files.push 'background.coffee'
+			@text_files.push "background.html"
+			@cs_files.push "background.coffee"
 		end
 
 		if EXT_POPOVER_MENU
-			@binary_files.push 'toolbar-button-icon-safari.png'
-			@binary_files.push 'toolbar-button-icon-safari@2x.png'
-			@binary_files.push 'toolbar-button-icon-chrome.png'
-			@binary_files.push 'toolbar-button-icon-chrome@2x.png'
-			@text_files.push 'popover.css'
-			@text_files.push 'popover.html'
-			@cs_files.push 'popover.coffee'
+			@binary_files.push "toolbar-button-icon-safari.png"
+			@binary_files.push "toolbar-button-icon-safari@2x.png"
+			@binary_files.push "toolbar-button-icon-chrome.png"
+			@binary_files.push "toolbar-button-icon-chrome@2x.png"
+			@text_files.push "popover.css"
+			@text_files.push "popover.html"
+			@cs_files.push "popover.coffee"
 		end
 	end
 
 	task :preflight => [:build_arrays] do
-		puts '', "#{EXT_DISPLAY_NAME} #{@ext_version}"
+		puts "", "#{EXT_DISPLAY_NAME} #{@ext_version}"
 
-		puts '','Preflight checks'.console_underline
+		puts "", "Preflight checks".console_underline
 
 		pf_errors = []
 		pf_success = []
 
 		if EXT_BACKGROUND_PAGE
 			# TODO: check for background page/scripts
-			pf_success.push 'TODO: check for background page/scripts'
+			pf_success.push "TODO: check for background page/scripts"
 		end
 
 		# Conditionally check for CoffeeScript
 		if @cs_files.length and not `which coffee`.strip!
-			pf_errors.push 'CoffeeScript is not installed, but required by '+@cs_files.join(', ')
+			pf_errors.push "CoffeeScript is not installed, but required by "+@cs_files.join(", ")
 		else
-			pf_success.push `coffee --version`.strip+' is installed'
+			pf_success.push `coffee --version`.strip+" is installed"
 		end
 
 		# TODO: Ensure EXT_SOURCE_DIR exists
@@ -94,9 +93,9 @@ namespace :extension do
 
 		((@cs_files + @text_files).sort + @binary_files).each do |filename|
 			if File.exists? File.join(EXT_SOURCE_DIR, filename)
-				pf_success.push filename+' exists'
+				pf_success.push filename+" exists"
 			else
-				pf_errors.push filename+' does not exist in '+EXT_SOURCE_DIR
+				pf_errors.push filename+" does not exist in "+EXT_SOURCE_DIR
 			end
 		end
 
@@ -104,10 +103,10 @@ namespace :extension do
 		puts pf_success.map {|q| "✔ #{q}"}.join("\n").console_green
 
 		if pf_errors.length > 0
-			puts '','Correct the errors to continue.',''
+			puts "","Correct the errors to continue.",""
 			exit 1
 		else
-			puts '✔ Everything looks good from here'
+			puts "✔ Everything looks good from here"
 		end
 	end
 
@@ -116,29 +115,29 @@ namespace :extension do
 	end
 
 	task :confirm_build do
-		puts "Browser extensions will be built in #{EXT_RELEASE_DIR}",''
-		print 'Is that ok? (y/n): '
+		puts "Browser extensions will be built in #{EXT_RELEASE_DIR}",""
+		print "Is that ok? (y/n): "
 
 		once = false
 		too_far = 0
 
 		begin
-			until %w( k ok y yes n no ).include?(answer = $stdin.gets.chomp.downcase)
+			until %w(k ok y yes n no).include?(answer = $stdin.gets.chomp.downcase)
 				exit 1 if too_far < 3
 				++too_far # += 1
 
 				if !once
-					print 'Please type y/yes or n/no. '
+					print "Please type y/yes or n/no. "
 					once = true
 				end
-				print 'Build extensions? (y/n): '
+				print "Build extensions? (y/n): "
 			end
 		rescue Interrupt
 			exit 1
 		end
 
 		exit 1 if answer =~ /n/
-		puts ''
+		puts ""
 	end
 
 	task :reset_build do
@@ -162,7 +161,7 @@ namespace :extension do
 		@cs_files.each do |filename|
 			cs_file = ext_copy_file(filename, EXT_SOURCE_DIR, EXT_DEST_PATH)
 			if `coffee -c #{cs_file}`
-				puts "✔ Compiled #{filename.console_bold} to #{filename.sub('.coffee','.js').console_bold}"
+				puts "✔ Compiled #{filename.console_bold} to #{filename.sub(".coffee",".js").console_bold}"
 			end
 		end
 
@@ -185,7 +184,7 @@ namespace :extension do
 			EXT_CERT_DIR,
 			File.expand_path(TEMP_DIR),
 			EXT_DEST_DIR
-		].join(' ')
+		].join(" ")
 
 		if `#{PWD}/build-safari-ext.sh #{build_options}`
 			puts "✔ Built Safari extension to #{EXT_RELEASE_DIR}"
@@ -193,11 +192,11 @@ namespace :extension do
 		if `#{PWD}/build-chrome-ext.sh #{build_options}`
 			puts "✔ Built Chrome extension to #{EXT_RELEASE_DIR}"
 		end
-		ext_copy_file('safari-update-manifest.plist', SERVER_SOURCE_DIR, EXT_RELEASE_DIR, with_erb: true)
+		ext_copy_file("safari-update-manifest.plist", SERVER_SOURCE_DIR, EXT_RELEASE_DIR, with_erb: true)
 	end
 
 	task :finish do
 		# TODO: something more inspiring here.
-		puts ''
+		puts ""
 	end
 end
