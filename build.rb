@@ -12,25 +12,6 @@ EXT_DEST_PATH = File.join(TEMP_DIR, EXT_DEST_DIR)
 @text_files = []
 @binary_files = []
 
-=begin
-{
-	:content_scripts => EXT_CONTENT_SCRIPTS,
-	:extra_resources => EXT_EXTRA_RESOURCES
-}.each do |var, filenames|
-	filenames.map! do |filename|
-		@cs_files.push filename if filename.match? /\.coffee$/
-		@js_files.push filename if filename.match? /\.js$/
-		filename.sub('.coffee','.js')
-	end
-
-	# Nasty hack, but whatever.
-	instance_variable_set "@#{var}", filenames
-end
-
-@ext_icons = []
-EXT_ICONS.each {|s| @ext_icons.push "Icon-#{s}.png" }
-=end
-
 EXT_CONTENT_SCRIPTS.each do |filename|
 	if /\.coffee$/.match filename
 		@cs_files.push filename
@@ -173,27 +154,26 @@ namespace :extension do
 	end
 
 	task :copy_files do
-		puts '','Crunch extension metadata'.console_underline
-		erb_crunch('Info.plist', PWD, EXT_DEST_PATH)
-		erb_crunch('manifest.json', PWD, EXT_DEST_PATH)
+		puts "","Copy extension metadata".console_underline
+		copy_file("Info.plist", PWD, EXT_DEST_PATH)
+		copy_file("manifest.json", PWD, EXT_DEST_PATH)
 
-		puts '','Crunch CoffeeScript files'.console_underline
+		puts "","Compile CoffeeScript files".console_underline
 		@cs_files.each do |filename|
-			cs_file = erb_crunch(filename, EXT_SOURCE_DIR, EXT_DEST_PATH)
+			cs_file = copy_file(filename, EXT_SOURCE_DIR, EXT_DEST_PATH)
 			if `coffee -c #{cs_file}`
 				puts "✔ Compiled #{filename.console_bold} to #{filename.sub('.coffee','.js').console_bold}"
 			end
 		end
 
-		puts '','Crunch text files'.console_underline
+		puts "","Copy text files".console_underline
 		@text_files.each do |filename|
-			erb_crunch(filename, EXT_SOURCE_DIR, EXT_DEST_PATH)
+			copy_file(filename, EXT_SOURCE_DIR, EXT_DEST_PATH)
 		end
 
-		puts '','Copy binary resources'.console_underline
+		puts "","Copy binary resources".console_underline
 		@binary_files.each do |filename|
-			cp File.join(EXT_SOURCE_DIR, filename), EXT_DEST_PATH
-			puts "✔ Copied #{filename.console_bold}"
+			copy_file(filename, EXT_SOURCE_DIR, EXT_DEST_PATH, with_erb: false)
 		end
 	end
 
@@ -213,7 +193,7 @@ namespace :extension do
 		if `#{PWD}/build-chrome-ext.sh #{build_options}`
 			puts "✔ Built Chrome extension to #{EXT_RELEASE_DIR}"
 		end
-		erb_crunch('safari-update-manifest.plist', SERVER_SOURCE_DIR, EXT_RELEASE_DIR)
+		copy_file('safari-update-manifest.plist', SERVER_SOURCE_DIR, EXT_RELEASE_DIR, with_erb: true)
 	end
 
 	task :finish do

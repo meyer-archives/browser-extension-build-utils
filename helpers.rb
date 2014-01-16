@@ -12,15 +12,28 @@ class String
 end
 
 # Compile source_dir/filename to destination_dir/filename
-def erb_crunch(filename, source_dir, destination_dir)
+def copy_file(filename, source_dir, destination_dir, with_erb: false)
 	source_file = File.join(source_dir, filename)
 	destination_file = File.join(destination_dir, filename)
 
 	mkdir_p destination_dir
 
-	File.open(destination_file, "w") do |f|
-		f.puts ERB.new(IO.read(source_file)).result(binding)
-		puts "✔ Crunched #{filename.console_bold}"
+	if with_erb == "maybe"
+		with_erb = false
+		if filename =~ /\.erb(\.[a-z]+)$/
+			with_erb = true
+			destination_file.gsub! /\.erb\.[a-z]+$/, $~[1]
+		end
+	end
+
+	if with_erb
+		File.open(destination_file, "w") do |f|
+			f.puts ERB.new(IO.read(source_file)).result(binding)
+			puts "✔ Copied #{filename.console_bold} (ERB)"
+		end
+	else
+		cp source_file, destination_dir
+		puts "✔ Copied #{filename.console_bold} (no ERB)"
 	end
 
 	return destination_file
