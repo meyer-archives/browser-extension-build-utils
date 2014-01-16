@@ -17,14 +17,7 @@ def ext_copy_file(filename, source_dir, destination_dir, with_erb: false)
 	destination_file = File.join(destination_dir, filename)
 
 	mkdir_p destination_dir
-
-	if with_erb == "maybe"
-		with_erb = false
-		if filename =~ /\.erb(\.[a-z]+)$/
-			with_erb = true
-			destination_file.gsub! /\.erb\.[a-z]+$/, $~[1]
-		end
-	end
+	destination_file.sub(/\.erb(\.[a-z]+)$/) {with_erb = true; "#{$1}"}
 
 	if with_erb
 		File.open(destination_file, "w") do |f|

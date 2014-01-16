@@ -155,8 +155,8 @@ namespace :extension do
 
 	task :copy_files do
 		puts "","Copy extension metadata".console_underline
-		ext_copy_file("Info.plist", PWD, EXT_DEST_PATH)
-		ext_copy_file("manifest.json", PWD, EXT_DEST_PATH)
+		ext_copy_file("Info.plist", PWD, EXT_DEST_PATH, with_erb: true)
+		ext_copy_file("manifest.json", PWD, EXT_DEST_PATH, with_erb: true)
 
 		puts "","Compile CoffeeScript files".console_underline
 		@cs_files.each do |filename|
@@ -173,7 +173,7 @@ namespace :extension do
 
 		puts "","Copy binary resources".console_underline
 		@binary_files.each do |filename|
-			ext_copy_file(filename, EXT_SOURCE_DIR, EXT_DEST_PATH, with_erb: false)
+			ext_copy_file(filename, EXT_SOURCE_DIR, EXT_DEST_PATH)
 		end
 	end
 
