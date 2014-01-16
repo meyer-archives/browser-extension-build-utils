@@ -12,7 +12,7 @@ class String
 end
 
 # Compile source_dir/filename to destination_dir/filename
-def copy_file(filename, source_dir, destination_dir, with_erb: false)
+def ext_copy_file(filename, source_dir, destination_dir, with_erb: false)
 	source_file = File.join(source_dir, filename)
 	destination_file = File.join(destination_dir, filename)
 

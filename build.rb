@@ -155,12 +155,12 @@ namespace :extension do
 
 	task :copy_files do
 		puts "","Copy extension metadata".console_underline
-		copy_file("Info.plist", PWD, EXT_DEST_PATH)
-		copy_file("manifest.json", PWD, EXT_DEST_PATH)
+		ext_copy_file("Info.plist", PWD, EXT_DEST_PATH)
+		ext_copy_file("manifest.json", PWD, EXT_DEST_PATH)
 
 		puts "","Compile CoffeeScript files".console_underline
 		@cs_files.each do |filename|
-			cs_file = copy_file(filename, EXT_SOURCE_DIR, EXT_DEST_PATH)
+			cs_file = ext_copy_file(filename, EXT_SOURCE_DIR, EXT_DEST_PATH)
 			if `coffee -c #{cs_file}`
 				puts "✔ Compiled #{filename.console_bold} to #{filename.sub('.coffee','.js').console_bold}"
 			end
@@ -168,16 +168,16 @@ namespace :extension do
 
 		puts "","Copy text files".console_underline
 		@text_files.each do |filename|
-			copy_file(filename, EXT_SOURCE_DIR, EXT_DEST_PATH)
+			ext_copy_file(filename, EXT_SOURCE_DIR, EXT_DEST_PATH)
 		end
 
 		puts "","Copy binary resources".console_underline
 		@binary_files.each do |filename|
-			copy_file(filename, EXT_SOURCE_DIR, EXT_DEST_PATH, with_erb: false)
+			ext_copy_file(filename, EXT_SOURCE_DIR, EXT_DEST_PATH, with_erb: false)
 		end
 	end
 
-	task :compile_extension => [:reset_build, :copy_files] do
+	task :compile_extension => [:reset_build, :ext_copy_files] do
 		# Using absolute paths because of the directory change
 		# TODO: better fix
 		build_options = [
@@ -193,7 +193,7 @@ namespace :extension do
 		if `#{PWD}/build-chrome-ext.sh #{build_options}`
 			puts "✔ Built Chrome extension to #{EXT_RELEASE_DIR}"
 		end
-		copy_file('safari-update-manifest.plist', SERVER_SOURCE_DIR, EXT_RELEASE_DIR, with_erb: true)
+		ext_copy_file('safari-update-manifest.plist', SERVER_SOURCE_DIR, EXT_RELEASE_DIR, with_erb: true)
 	end
 
 	task :finish do
