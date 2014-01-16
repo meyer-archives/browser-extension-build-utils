@@ -131,10 +131,7 @@ namespace :extension do
 	end
 
 	task :set_dev_version do
-		@ext_version = [
-			EXT_VERSION,
-			(Time.now.to_i/60).to_s[-4,4].sub(%r{^0},'9')
-		].join('.')
+		@ext_version = "#{EXT_VERSION}.#{EXT_BUILD_NUMBER}"
 	end
 
 	task :confirm_build do
