@@ -17,8 +17,9 @@
 	},
 	"background": {
 		"scripts": ["background.js"],
-		"persistent": false
+		"persistent": true
 	},
+    "content_security_policy": "default-src 'self' <%= DEX_URL %>",
 	"content_scripts": [{
 		"all_frames": true,
 		"run_at": "document_start",
@@ -33,6 +34,9 @@
 <%= @extra_resources.map {|r| "\t\t\"#{r}\"" }.join(",\n") %>
 	],
 	"permissions": [
-		"tabs"
+		"tabs",
+		"webRequest",
+		"webRequestBlocking",
+<%= EXT_WHITELIST.map {|pattern| "\t\t\"#{pattern}\""}.join(",\n") %>
 	]
 }

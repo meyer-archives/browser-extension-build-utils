@@ -159,7 +159,7 @@ namespace :extension do
 
 		puts "","Compile CoffeeScript files".console_underline
 		@cs_files.each do |filename|
-			cs_file = ext_copy_file(filename, EXT_SOURCE_DIR, EXT_DEST_PATH)
+			cs_file = ext_copy_file(filename, EXT_SOURCE_DIR, EXT_DEST_PATH, with_erb: true)
 			if `coffee -c #{cs_file}`
 				puts "✔ Compiled #{filename.console_bold} to #{filename.sub(".coffee",".js").console_bold}"
 			end
