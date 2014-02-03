@@ -8,6 +8,7 @@ EXT_DEST_PATH = File.join(TEMP_DIR, EXT_DEST_DIR)
 @extra_resources = []
 
 @cs_files = []
+@js_files = []
 @text_files = []
 @binary_files = []
 
@@ -17,14 +18,14 @@ EXT_CONTENT_SCRIPTS.each do |filename|
 	else
 		@text_files.push filename
 	end
-	@content_scripts.push filename.sub ".coffee",".js"
+	@content_scripts.push filename.sub ".coffee", ".js"
 end
 
 EXT_EXTRA_RESOURCES.each do |filename|
 	/\.(coffee|js|html|css)$/ =~ filename
 
-	if Regexp.last_match
-		if Regexp.last_match[1] == "coffee"
+	if $~
+		if $~[1] == "coffee"
 			@cs_files.push filename
 		else
 			@text_files.push filename
@@ -32,7 +33,7 @@ EXT_EXTRA_RESOURCES.each do |filename|
 	else
 		@binary_files.push filename
 	end
-	@extra_resources.push filename.sub ".coffee",".js"
+	@extra_resources.push filename.sub ".coffee", ".js"
 end
 
 namespace :extension do
@@ -167,7 +168,7 @@ namespace :extension do
 
 		puts "","Copy text files".console_underline
 		@text_files.each do |filename|
-			ext_copy_file(filename, EXT_SOURCE_DIR, EXT_DEST_PATH)
+			ext_copy_file(filename, EXT_SOURCE_DIR, EXT_DEST_PATH, with_erb: true)
 		end
 
 		puts "","Copy binary resources".console_underline
