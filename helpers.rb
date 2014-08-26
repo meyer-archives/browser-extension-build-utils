@@ -22,11 +22,11 @@ def ext_copy_file(filename, source_dir, destination_dir, with_erb: false)
 	if with_erb
 		File.open(destination_file, "w") do |f|
 			f.puts ERB.new(IO.read(source_file)).result(binding)
-			puts "✔ Copied #{filename.console_bold} (ERB)"
+			puts "✔ Copied #{source_file.console_bold} (ERB)"
 		end
 	else
 		cp source_file, destination_dir
-		puts "✔ Copied #{filename.console_bold} (no ERB)"
+		puts "✔ Copied #{source_file.console_bold} (no ERB)"
 	end
 
 	return destination_file

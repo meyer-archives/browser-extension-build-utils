@@ -67,7 +67,8 @@ namespace :extension do
 	task :preflight => [:build_arrays] do
 		puts "", "#{EXT_DISPLAY_NAME} #{@ext_version}"
 
-		puts "", "Preflight checks".console_underline
+		puts ""
+		print "Preflight checks".console_underline
 
 		pf_errors = []
 		pf_success = []
@@ -100,14 +101,14 @@ namespace :extension do
 			end
 		end
 
-		puts pf_errors.map {|q| "✗ #{q}"}.join("\n").console_red
-		puts pf_success.map {|q| "✔ #{q}"}.join("\n").console_green
+		puts pf_errors.map {|q| "✗ #{q}"}.join("\n")
+		puts pf_success.map {|q| "✔ #{q}"}.join("\n")
 
 		if pf_errors.length > 0
-			puts "","Correct the errors to continue.",""
+			puts "","Correct the errors to continue.".console_red,""
 			exit 1
 		else
-			puts "✔ Everything looks good from here"
+			puts "✔ Everything looks good from here".console_green
 		end
 	end
 
@@ -125,7 +126,7 @@ namespace :extension do
 		begin
 			until %w(k ok y yes n no).include?(answer = $stdin.gets.chomp.downcase)
 				exit 1 if too_far < 3
-				++too_far # += 1
+				++too_far
 
 				if !once
 					print "Please type y/yes or n/no. "
@@ -142,6 +143,9 @@ namespace :extension do
 	end
 
 	task :reset_build do
+		puts ""
+		puts "Reset build folder".console_underline
+
 		# Make ./bin
 		mkdir_p EXT_RELEASE_DIR
 
@@ -149,7 +153,7 @@ namespace :extension do
 		rm_rf EXT_DEST_PATH
 		mkdir_p EXT_DEST_PATH
 
-		puts "✔ Reset build folder"
+		puts "✔ Minty fresh!"
 
 	end
 
@@ -168,7 +172,7 @@ namespace :extension do
 
 		puts "","Copy text files".console_underline
 		@text_files.each do |filename|
-			ext_copy_file(filename, EXT_SOURCE_DIR, EXT_DEST_PATH, with_erb: true)
+			ext_copy_file(filename, EXT_SOURCE_DIR, EXT_DEST_PATH, with_erb: false)
 		end
 
 		puts "","Copy binary resources".console_underline
