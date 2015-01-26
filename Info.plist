@@ -25,10 +25,10 @@
 			<dict>
 				<key>Filename</key>
 				<string>popover.html</string>
-				<key>Height</key>
-				<real>400</real>
 				<key>Identifier</key>
 				<string>DexPopover</string>
+				<key>Height</key>
+				<real>400</real>
 				<key>Width</key>
 				<real>300</real>
 			</dict>

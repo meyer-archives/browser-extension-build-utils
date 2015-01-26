@@ -50,6 +50,7 @@ namespace :extension do
 
 		if EXT_BACKGROUND_PAGE
 			@text_files.push "background.html"
+			@cs_files.push "utils.coffee"
 			@cs_files.push "background.coffee"
 		end
 
