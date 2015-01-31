@@ -16,7 +16,7 @@
 		"default_popup": "popover.html"
 	},
 	"background": {
-		"scripts": ["utils.js","background.js"],
+		"scripts": ["utils.js","background-chrome.js"],
 		"persistent": true
 	},
     "content_security_policy": "default-src 'self' 'unsafe-eval' <%= DEX_URL %>",

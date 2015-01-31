@@ -49,9 +49,10 @@ namespace :extension do
 		end
 
 		if EXT_BACKGROUND_PAGE
-			@text_files.push "background.html"
+			@text_files.push "background-safari.html"
 			@cs_files.push "utils.coffee"
-			@cs_files.push "background.coffee"
+			@cs_files.push "background-safari.coffee"
+			@cs_files.push "background-chrome.coffee"
 		end
 
 		if EXT_POPOVER_MENU
@@ -59,6 +60,8 @@ namespace :extension do
 			@binary_files.push "toolbar-button-icon-safari@2x.png"
 			@binary_files.push "toolbar-button-icon-chrome.png"
 			@binary_files.push "toolbar-button-icon-chrome@2x.png"
+			@binary_files.push "toolbar-button-icon-chrome-disabled.png"
+			@binary_files.push "toolbar-button-icon-chrome-disabled@2x.png"
 			@text_files.push "popover.css"
 			@text_files.push "popover.html"
 			@cs_files.push "popover.coffee"
