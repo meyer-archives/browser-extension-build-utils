@@ -117,7 +117,7 @@ namespace :extension do
 	end
 
 	task :set_dev_version do
-		@ext_version = "#{EXT_VERSION}.#{EXT_BUILD_NUMBER}"
+		@ext_version = "#{EXT_VERSION}.#{@ext_build_number}"
 	end
 
 	task :confirm_build do
